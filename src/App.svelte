@@ -1,13 +1,22 @@
 <script>
-    let globalObject = {};
-    let nameFn = "MyNewFunction";
+    let formulas = [];
 
-    const createFn = function (object, functionName, Body) {
-        object[functionName] = new Function(Body);
-    };
+    function addFormula(
+        equation = "Break-Even_Point = Fixed_costs / ( Sales_per_unit_cost - Fixed_cost_per_unit )"
+    ) {
+        const expression = equation.split("=")[1].trim();
+        let params = expression.split(/[\+\-\*\/\(\)]/);
+        params = params
+            .filter((item) => item.trim())
+            .map((item) => item.trim());
 
-    createFn(globalObject, nameFn, "return (arguments[0] + arguments[1])/2");
-    createFn(globalObject, "sum", "return (arguments[0]+arguments[1])");
-    console.log(globalObject[nameFn](10, 20));
-    console.log(globalObject["sum"](10, 20));
+        formulas.push({
+            equation,
+            solve: new Function(...params, `return ${expression}`),
+        });
+    }
+
+    addFormula("sum = a + b");
+    console.log(formulas);
+    console.log(formulas[0].solve(1, 1));
 </script>
