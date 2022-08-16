@@ -1,22 +1,44 @@
 <script>
     let formulas = [];
 
-    function addFormula(
-        equation = "Break-Even_Point = Fixed_costs / ( Sales_per_unit_cost - Fixed_cost_per_unit )"
-    ) {
-        const expression = equation.split("=")[1].trim();
-        let params = expression.split(/[\+\-\*\/\(\)]/);
-        params = params
-            .filter((item) => item.trim())
-            .map((item) => item.trim());
+    function addFormula(formulas, equation = "") {
+        const operators = "+-*/()".split("");
 
-        formulas.push({
+        const result = equation.split("=")[0].trim();
+        // parse expression
+        const expression_unparse = equation.split("=")[1].trim();
+        const expressionArray = expression_unparse
+            .split(/([+-/*()])/)
+            .filter((item) => item.trim())
+            .map((item) => item.trim().replaceAll(" ", "_"));
+
+        const function_params = expressionArray.filter(
+            (item) => !operators.includes(item)
+        );
+        const function_body = expressionArray.join(" ");
+        const params_placeholder = function_params.map((item) =>
+            item.replaceAll("_", " ")
+        );
+        const solve = new Function(
+            ...function_params,
+            `return ${function_body}`
+        );
+
+        const formula = {
             equation,
-            solve: new Function(...params, `return ${expression}`),
-        });
+            result,
+            params_placeholder,
+            solve,
+        };
+
+        formulas.push(formula);
     }
 
-    addFormula("sum = a + b");
+    // addFormula(
+    //     formulas,
+    //     "Break-Even Point = Fixed costs / ( Sales per unitcost - Fixed cost per unit )"
+    // );
+
+    // console.log(formulas[0].solve(10, 7, 5));
     console.log(formulas);
-    console.log(formulas[0].solve(1, 1));
 </script>
