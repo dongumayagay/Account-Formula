@@ -1,7 +1,9 @@
 <script>
-    let formulas = [];
+    import { formulas } from "./lib/stores";
 
-    function addFormula(formulas, equation = "") {
+    // let formulas = [];
+
+    function addFormula(equation = "") {
         const operators = "+-*/()".split("");
 
         const result = equation.split("=")[0].trim();
@@ -31,14 +33,16 @@
             solve,
         };
 
-        formulas.push(formula);
+        $formulas = [...$formulas, formula];
     }
 
     // addFormula(
-    //     formulas,
+    //     $formulas,
     //     "Break-Even Point = Fixed costs / ( Sales per unitcost - Fixed cost per unit )"
     // );
 
-    // console.log(formulas[0].solve(10, 7, 5));
-    console.log(formulas);
+    $: console.log($formulas);
+    // console.log($formulas[0].solve(10, 7, 5));
 </script>
+
+<button on:click={() => addFormula("a = b + c")}>add formula</button>
