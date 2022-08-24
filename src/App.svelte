@@ -2,10 +2,23 @@
     import { formulas } from "./lib/stores";
     import createFormula from "./lib/utils/createFormula";
 
+    let searchTerm = "";
     let modalAddFormula = false;
+    let modalUseFormula = false;
+
     const toggleAddModal = () => (modalAddFormula = !modalAddFormula);
-    let modalUseFormula = true;
     const toggleUseModal = () => (modalUseFormula = !modalUseFormula);
+
+    function submitHandler(event) {
+        const equation = new FormData(event.target).get("equation");
+        // @ts-ignore
+        $formulas = [...$formulas, createFormula(equation.toString())];
+        toggleAddModal();
+    }
+
+    $: filteredList = $formulas.filter(
+        (item) => item.equation.indexOf(searchTerm) !== -1
+    );
 </script>
 
 <div class="h-full flex flex-col">
@@ -15,24 +28,37 @@
         </button>
     </ul>
     <nav
-        class="border-t border-neutral-400 mt-auto grid grid-cols-2 py-3 px-4 gap-3"
+        class="border-t border-neutral-400 mt-auto flex justify-center py-3 px-4 gap-3"
     >
-        <button on:click={toggleAddModal} class="py-1.5">
+        <button on:click={toggleAddModal} class="py-1.5 text-center">
             Create new formula
         </button>
         <!-- <button class="py-1.5"> Formula list </button> -->
     </nav>
 </div>
 
+<svelte:window
+    on:keydown={(event) => {
+        if (event.keyCode == 27) {
+            modalAddFormula = false;
+            modalUseFormula = false;
+        }
+    }}
+/>
+
 {#if modalAddFormula}
     <div on:click|self={toggleAddModal} class="fixed bg-black/50 inset-0 p-4">
-        <form class="bg-white p-3 max-w-lg mx-auto">
+        <form
+            on:submit|preventDefault={submitHandler}
+            class="bg-white p-3 max-w-lg mx-auto"
+        >
             <p>Enter new formula</p>
             <!-- svelte-ignore a11y-autofocus -->
             <input
                 type="text"
                 class="w-full text-lg py-2 px-3 border"
                 placeholder="A of △ = ( base * height ) / 2"
+                name="equation"
                 autofocus
             />
         </form>
@@ -40,7 +66,7 @@
 {/if}
 {#if modalUseFormula}
     <div on:click|self={toggleUseModal} class="fixed bg-black/50 inset-0 p-4">
-        <form class="bg-white p-3 h-full md:max-h-96 max-w-lg mx-auto">
+        <main class="bg-white p-3 h-full md:max-h-96 max-w-lg mx-auto">
             <p>Search formula</p>
             <!-- svelte-ignore a11y-autofocus -->
             <input
@@ -48,7 +74,11 @@
                 class="w-full text-lg py-2 px-3 border"
                 placeholder="A of △ = ( base * height ) / 2"
                 autofocus
+                bind:value={searchTerm}
             />
-        </form>
+            {#each filteredList as formula}
+                <p class="text-red">{formula.equation}</p>
+            {/each}
+        </main>
     </div>
 {/if}
