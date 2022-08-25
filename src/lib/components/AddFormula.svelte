@@ -16,7 +16,7 @@
 </button>
 {#if addFormulaModal}
     <div
-        on:click|self={() => (addFormulaModal = true)}
+        on:click|self={() => (addFormulaModal = false)}
         class="fixed bg-black/50 inset-0 p-4"
     >
         <form
