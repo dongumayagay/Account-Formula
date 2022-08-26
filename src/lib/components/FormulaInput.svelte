@@ -6,9 +6,8 @@
     function submitHandler(event) {
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData);
-        // console.log(formData);
-        console.log(data);
-        result = "test";
+        const params = Object.values(data);
+        result = $selectedFormula.solve(...params);
     }
     $: console.log($selectedFormula);
 </script>
