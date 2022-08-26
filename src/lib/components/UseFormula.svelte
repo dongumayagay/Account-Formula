@@ -2,7 +2,7 @@
     import { formulas } from "../stores";
     import FormulaCard from "./FormulaCard.svelte";
 
-    let useFormulaModal = true;
+    let useFormulaModal = false;
     let searchTerm = "";
 
     $: filteredList = $formulas

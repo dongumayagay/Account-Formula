@@ -11,3 +11,5 @@ function getStoredItem(itemName = "", fallbackValue) {
     if (item_string === null) return fallbackValue;
     return JSON.parse(item_string);
 }
+
+export const selectedFormula = writable();
